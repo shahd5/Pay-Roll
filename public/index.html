@@ -1,53 +1,118 @@
-<!DOCTYPE html>
+<!DOCTYPE hmtl>
 <html>
     <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-            <style>
-                .modal1 {
-                    display: block; /* Hidden by default */
-                    position: fixed; /* Stay in place */
-                    z-index: 1; /* Sit on top */
-                    left: 0;
-                    top: 0;
-                    width: 100%; /* Full width */
-                    height: 100%; /* Full height */
-                    overflow: auto; /* Enable scroll if needed */
-                    background-color: rgb(0,0,0); /* Fallback color */
-                    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-                    padding-top: 60px;
 
+            <style>
+                a{
+                    cursor:pointer;
                 }
-                
+                input  type="time"{
+                    width: 80%;
+                }
             </style>
     </head>
+
     <body>
-         <button onclick="document.getElementById('id01').style.display='block'" style="width:50%">Sign Up</button>
-        <div class="modal1" id="id01">
-            <form class="container" >
-                    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal" style="color: #080808;cursor: pointer;">×</span>
-                    
-                    <div class="row col-md-12" >
-                        <div class="card card-body">
-                            <h2>Sign In</h2>
-                            <label><b>Email</b></label>
-                            <input type="text" placeholder="Enter Email"  required>
-
-                            <label><b>Password</b></label>
-                            <input type="password" placeholder="Enter Password"  required>
-
-                            <div>
-                                <input type="checkbox" checked="checked"><span style"">Remember me</span>
-                            </div>
-
-                            <div class="row" style ="padding-left: 10px">
-                                <button type="button" onclick="document.getElementById('id01').style.display='none'">Cancel</button>
-                            <b style="padding-left: 10px"><button type="submit" class="">Sign in</button></b>
-                            </div>
+       
+            <div class="container">
+                <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                        <a class="nav-link "  id="a">Submit Time Sheet</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link"  id="b" >View Time Sheet</a>
+                        </li>
+                        <li class="nav-item manager">
+                        <a class="nav-link"  id="c">Review Time Sheet</a>
+                        </li>
+                </ul>
+                <div class="ab a">
+                    <form action="/" method="post">
+                        <div align="center">
+                            <div class = "date"></div>
+                            <div class = "time"></div>
+                            <button type="button" class="btn btn-primary timeIN">Time In</button>
+                            <button type="button" class="btn btn-primary">Lunch In</button>
+                            <button type="button" class="btn btn-primary">Lunch Out</button>
+                            <button type="button" class="btn btn-primary">Time Out</button>
                         </div>
-                    </div>
-            </form>
-        </div>
+                    </form>
+                </div>
+                <div class="ab b">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Date</th>
+                                <th>Total Hours</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        
+                    </table>
+                    
+                </div>
+                <div class="ab c">
+                    <h1>Review Time sheet</h1>
+                </div>             
+            </div>
+       
+        
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        
+        <script>
+
+           
+            
+                
+            
+            setInterval(function(){
+                var d = new Date();
+                var strDate = (d.getMonth()+1) + "/" + d.getDate() + "/" +d.getFullYear() ;
+                var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                $(".date").html(`<h1>${strDate}</h1>`);
+                $(".time").html(`<h1>${strTime}</h1>`);
+            },1000);
+           
+
+            $(document).ready(function(){
+                $("div.ab").hide();
+                $("tr").click(function(){
+                alert($(this).children().val());
+                });
+                var i =0;
+               
+                $("#b").on('click',function(){   
+                    if(i==0){
+                        $.get("http://localhost:3000/viewtimesheet", function(data, status){
+                    $.each(data, function () {
+                        $("tbody").append(`<tr><td>${this.term}</td><td>${this.defined}<td></tr>`);
+                    });
+                    }); i++;
+                    }
+                });
+                });
+           
+            $("a.nav-link").click(function(){
+                $("a.nav-link").removeClass("active");
+                $("div.ab").hide();
+                $(this).addClass("active");
+                $( "div."+this.id).show();});
+
+                $(".timeIN").click(function (e) {
+                    var d = new Date();
+                    var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                e.preventDefault();
+                $.post('/submittimein', {term: strTime,def:"helo"});
+                alert(strTime);
+                });
+                
+        </script>
     </body>
 </html>
