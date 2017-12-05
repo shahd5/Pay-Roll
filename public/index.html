@@ -16,7 +16,6 @@
     </head>
 
     <body>
-       
             <div class="container">
                 <ul class="nav nav-tabs">
                         <li class="nav-item">
@@ -35,7 +34,7 @@
                             <div class = "date"></div>
                             <div class = "time"></div>
                             <button type="button" class="btn btn-primary timeIN">Time In</button>
-                            <button type="button" class="btn btn-primary">Lunch In</button>
+                            <button type="button" class="btn btn-primary lunchIN">Lunch In</button>
                             <button type="button" class="btn btn-primary">Lunch Out</button>
                             <button type="button" class="btn btn-primary">Time Out</button>
                         </div>
@@ -67,11 +66,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         
         <script>
-
-           
-            
-                
-            
             setInterval(function(){
                 var d = new Date();
                 var strDate = (d.getMonth()+1) + "/" + d.getDate() + "/" +d.getFullYear() ;
@@ -84,11 +78,27 @@
             $(document).ready(function(){
                 $("div.ab").hide();
                 $("tr").click(function(){
-                alert($(this).children().val());
-                });
-                var i =0;
-               
-                $("#b").on('click',function(){   
+            });
+            
+           
+           
+            $.get("http://localhost:3000/submittimeincheck", function(data, status){
+                alert(data);
+                alert(data ==="false");
+                alert(data =="false");
+                if(data ==="false"){
+                    $(".timeIN").prop('disabled', true);
+                }
+            });
+            $.get("http://localhost:3000/lunchincheck", function(data, status){
+                if(data==="false"){
+                    $(".timeIN").prop('disabled', true);
+                }
+            });
+
+            var i =0;
+
+            $("#b").on('click',function(){   
                     if(i==0){
                         $.get("http://localhost:3000/viewtimesheet", function(data, status){
                     $.each(data, function () {
@@ -97,21 +107,34 @@
                     }); i++;
                     }
                 });
-                });
+                
+            });
            
             $("a.nav-link").click(function(){
                 $("a.nav-link").removeClass("active");
                 $("div.ab").hide();
                 $(this).addClass("active");
-                $( "div."+this.id).show();});
+                $( "div."+this.id).show();
+            });
 
-                $(".timeIN").click(function (e) {
-                    var d = new Date();
-                    var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+            $(".timeIN").click(function (e) {
+                var d = new Date();
+                var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
                 e.preventDefault();
-                $.post('/submittimein', {term: strTime,def:"helo"});
-                alert(strTime);
+                $.post('/submittimein', {timein: d},function(data,status){     
+                        $(".timeIN").prop('disabled', true);
+                    
                 });
+            });
+
+            $(".lunchIN").click(function (e) {
+                var d = new Date();
+                var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                e.preventDefault();
+                $.post('/submittimein', {timein: d},function(data,status){
+                    $(".lunchIN").prop('disabled', true);
+                });
+            });
                 
         </script>
     </body>

@@ -4,8 +4,10 @@ var path = require("path");
 var bodyParser = require("body-parser");
 var express = require("express");
 var app = express();
+const sql = require("./mysqlconn");
 
 
+var userid ;
 
 var dbData=[{
     term:"RIP",
@@ -26,19 +28,53 @@ app.use(function(req,res,next){
 
 app.use(express.static("./public"));
 
+
+app.use("/login",function(req,res){
+    fs.readFile("./public/views.html","UTF-8",function(err,html){
+        res.writeHead(200,{"Content-Type":"text/html"});
+        res.end(html);
+    });
+});
+
 app.get("/viewtimesheet",function(req,res){
     res.json(dbData);
+    
 });
 
 app.post("/submittimein",function(req,res){
     var a = req.body;
-    console.log(a.term+"  "+a.def);
-    
+    console.log(a.timein);
+    var timein = new Date(a.timein);
+    console.log(timein.getMilliseconds()+"  "+timein.getHours()+"  "+timein.getMinutes()+"  "+timein.getSeconds());
+    console.log("This is the userid:"+userid);
+    sql.two(userid,timein);
+    res.end(sql.three(userid,new Date()).toString());
 });
 
+
+
+app.post("/authentication",function(req,res){
+    var a = req.body;
+    console.log(a.userid+"  "+a.pass);
+    console.log("hope");
+    var x = sql.one(a.userid,a.pass).toString();
+    if(x =="true"){
+        userid = a.userid;
+    }
+    console.log("This is the userid:"+userid);
+    res.end(x);
+});
+
+app.get("/submittimeincheck",function(req,res){
+    res.end(sql.three(userid,new Date()).toString());
+});
+
+app.get("/lunchincheck",function(req,res){
+    res.end(sql.four(userid,new Date()).toString());
+});
+
+
 app.listen(3000);
-
-
 
 
 // http.createServer(function(req,res){

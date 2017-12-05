@@ -32,10 +32,10 @@
                         <div class="card card-body">
                             <h2>Sign In</h2>
                             <label><b>Email</b></label>
-                            <input type="text" placeholder="Enter Email"  required>
+                            <input type="text" placeholder="Enter Email" class="id" required>
 
                             <label><b>Password</b></label>
-                            <input type="password" placeholder="Enter Password"  required>
+                            <input type="password" placeholder="Enter Password" class="pass" required>
 
                             <div>
                                 <input type="checkbox" checked="checked"><span style"">Remember me</span>
@@ -43,11 +43,39 @@
 
                             <div class="row" style ="padding-left: 10px">
                                 <button type="button" onclick="document.getElementById('id01').style.display='none'">Cancel</button>
-                            <b style="padding-left: 10px"><button type="submit" class="">Sign in</button></b>
+                            <b style="padding-left: 10px"><button type="button" class="signin">Sign in</button></b>
                             </div>
                         </div>
                     </div>
             </form>
         </div>
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                $(".signin").click(function(e){
+                    e.preventDefault();
+                    $.post("/authentication",{userid:$(".id").val(),pass:$(".pass").val()},function(data,status){
+                             if(data === "true"){
+                                 window.location.href="http://localhost:3000";
+                             }
+                    });
+                });
+            });
+                        
+            //get request to see timesubmited
+            // $("#b").on('click',function(){   
+            //     if(i==0){
+            //         $.get("http://localhost:3000/viewtimesheet", function(data, status){
+            //     $.each(data, function () {
+            //         $("tbody").append(`<tr><td>${this.term}</td><td>${this.defined}<td></tr>`);
+            //     });
+            //     }); i++;
+            //     }
+            // });
+        </script>
     </body>
 </html>
