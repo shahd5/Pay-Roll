@@ -35,8 +35,8 @@
                             <div class = "time"></div>
                             <button type="button" class="btn btn-primary timeIN">Time In</button>
                             <button type="button" class="btn btn-primary lunchIN">Lunch In</button>
-                            <button type="button" class="btn btn-primary">Lunch Out</button>
-                            <button type="button" class="btn btn-primary">Time Out</button>
+                            <button type="button" class="btn btn-primary lunchOUT">Lunch Out</button>
+                            <button type="button" class="btn btn-primary timeOUT">Time Out</button>
                         </div>
                     </form>
                 </div>
@@ -44,9 +44,9 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Day</th>
                                 <th>Date</th>
                                 <th>Total Hours</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -83,16 +83,23 @@
            
            
             $.get("http://localhost:3000/submittimeincheck", function(data, status){
-                alert(data);
-                alert(data ==="false");
-                alert(data =="false");
                 if(data ==="false"){
                     $(".timeIN").prop('disabled', true);
                 }
             });
             $.get("http://localhost:3000/lunchincheck", function(data, status){
                 if(data==="false"){
-                    $(".timeIN").prop('disabled', true);
+                    $(".lunchIN").prop('disabled', true);
+                }
+            });
+            $.get("http://localhost:3000/lunchoutcheck", function(data, status){
+                if(data==="false"){
+                    $(".lunchOUT").prop('disabled', true);
+                }
+            });
+            $.get("http://localhost:3000/timeoutcheck", function(data, status){
+                if(data==="false"){
+                    $(".timeOUT").prop('disabled', true);
                 }
             });
 
@@ -102,7 +109,7 @@
                     if(i==0){
                         $.get("http://localhost:3000/viewtimesheet", function(data, status){
                     $.each(data, function () {
-                        $("tbody").append(`<tr><td>${this.term}</td><td>${this.defined}<td></tr>`);
+                        $("tbody").append(`<tr><td>${this.date}</td><td>${this.total}</td><td>${this.pending}</td></tr>`);
                     });
                     }); i++;
                     }
@@ -131,8 +138,26 @@
                 var d = new Date();
                 var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
                 e.preventDefault();
-                $.post('/submittimein', {timein: d},function(data,status){
+                $.post('/submitlunchin', {timein: d},function(data,status){
                     $(".lunchIN").prop('disabled', true);
+                });
+            });
+
+            $(".lunchOUT").click(function (e) {
+                var d = new Date();
+                var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                e.preventDefault();
+                $.post('/submitlunchout', {timein: d},function(data,status){
+                    $(".lunchOUT").prop('disabled', true);
+                });
+            });
+
+            $(".timeOUT").click(function (e) {
+                var d = new Date();
+                var strTime = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                e.preventDefault();
+                $.post('/submittimeout', {timein: d},function(data,status){
+                    $(".timeOUT").prop('disabled', true);
                 });
             });
                 

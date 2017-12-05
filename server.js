@@ -8,20 +8,14 @@ const sql = require("./mysqlconn");
 
 
 var userid ;
+//var manager;
 
-var dbData=[{
-    term:"RIP",
-    defined:"To move a mountain"
-    },{
-        term:"ASAP",
-        defined:"To move a ASAP"
-    }];
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 
 app.use(function(req,res,next){
-    console.log(`${req.method} request for ${req.url} - ${JSON.stringify(req.body)}`);
+   // console.log(`${req.method} request for ${req.url} - ${JSON.stringify(req.body)}`);
     next();
 });
 
@@ -36,75 +30,73 @@ app.use("/login",function(req,res){
     });
 });
 
+app.post("/authentication",function(req,res){
+    var a = req.body;
+    var x = sql.one(a.userid,a.pass).toString();
+    if(x =="true"){
+        userid = a.userid;        
+    }
+    res.end(x);
+});
+
 app.get("/viewtimesheet",function(req,res){
+
+    var dbData = sql.five(userid);    
     res.json(dbData);
     
 });
 
 app.post("/submittimein",function(req,res){
     var a = req.body;
-    console.log(a.timein);
     var timein = new Date(a.timein);
-    console.log(timein.getMilliseconds()+"  "+timein.getHours()+"  "+timein.getMinutes()+"  "+timein.getSeconds());
-    console.log("This is the userid:"+userid);
-    sql.two(userid,timein);
-    res.end(sql.three(userid,new Date()).toString());
+    sql.four(userid,timein.getHours()+":"+timein.getMinutes());
+    res.end("");
 });
 
-
-
-app.post("/authentication",function(req,res){
+app.post("/submitlunchin",function(req,res){
     var a = req.body;
-    console.log(a.userid+"  "+a.pass);
-    console.log("hope");
-    var x = sql.one(a.userid,a.pass).toString();
-    if(x =="true"){
-        userid = a.userid;
-    }
-    console.log("This is the userid:"+userid);
-    res.end(x);
+    var timein = new Date(a.timein);
+    sql.two("lunchin",userid,timein.getHours()+":"+timein.getMinutes());
+    res.end("");
 });
+
+app.post("/submitlunchout",function(req,res){
+    var a = req.body;
+    var timein = new Date(a.timein);
+    sql.two("lunchout",userid,timein.getHours()+":"+timein.getMinutes());
+    res.end("");
+});
+
+app.post("/submittimeout",function(req,res){
+    var a = req.body;
+    var timein = new Date(a.timein);
+    sql.two("timeout",userid,timein.getHours()+":"+timein.getMinutes());
+    res.end("");
+});
+
+
+
+
 
 app.get("/submittimeincheck",function(req,res){
-    res.end(sql.three(userid,new Date()).toString());
+    res.end(sql.three("timein",userid,new Date()).toString());
 });
-
+//make changes for all below
 app.get("/lunchincheck",function(req,res){
-    res.end(sql.four(userid,new Date()).toString());
+    res.end(sql.three("lunchin",userid,new Date()).toString());
 });
 
+app.get("/lunchoutcheck",function(req,res){
+    res.end(sql.three("lunchout",userid,new Date()).toString());
+});
+
+app.get("/timeoutcheck",function(req,res){
+    res.end(sql.three("timeout",userid,new Date()).toString());
+});
 
 app.listen(3000);
 
 
-// http.createServer(function(req,res){
-//     console.log(`${req.method} request for ${req.url}`);
-//     if(req.method ==="GET"){
-//         if(req.url ==="/"){
-//             fs.readFile("./public/view.html","UTF-8",function(err,html){
-//                 res.writeHead(200,{"Content-Type":"text/html"});
-//                 res.end(html);
-//             });
-//         }else if(req.url ==="/viewtimesheet"){
-//             res.end("hello  world");
-//         }else{
-//             res.writeHead(404,{"Content-Type":"text/plain"});
-//             res.end("404 File not found");
-//         }
-//     }else if(req.method ==="POST"){
-//         var body = "";
-//         req.on("data",function(chunk){
-//             body += chunk;
-//         });
-//         req.on("end",function(){
-//             fs.readFile("./public/index.html","UTF-8",function(err,html){
-//                 res.writeHead(200,{"Content-Type":"text/html"});
-//                 res.end(html);
-//             });
-//         });
-//     }
-    
-// }).listen(3000);
 
 
 

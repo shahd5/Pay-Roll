@@ -26,34 +26,10 @@ con.connect(function(err){
 
 var client = mysql.createConnection("127.0.0.1","root","123456789","mybd");
 
-// con.connect(function(err) {
-//     if (err) throw err;
-//     console.log("Connected!");
-//     var sql = `SELECT * FROM user WHERE id = 'abcde'`;
-//     con.query(sql, function (err, result) {
-//       if (err) throw err;
-//       console.log(result[0].ID);
-//     });
-//   });
 
-//   module.exports = function auth(user,pass){
-//     con.connect(function(err) {
-//       if (err) throw err;
-//       console.log("Connected!");
-//       var sql = `SELECT * FROM user WHERE id = '${user}','${pass}'`;
-//       con.query(sql, function (err, result) {
-//         if (err){
-//            throw err;
-//            return false;
-//         }else{
-//           return true;
-//         }
-//         console.log(result[0].ID);
-//       });
-//     });
-//   }
 module.exports={
   
+  //autho
   one : function(user,pass){
     
     var boo = false;
@@ -66,10 +42,60 @@ module.exports={
       },
       sql
     );
-   
+      global.manager = output.data.rows[0].role;
       return user == output.data.rows[0].ID && pass == output.data.rows[0].password;
   },
-  two : function(user,timein){
+  //insert lunchin,out,timeout
+  two : function(col,user,timein){
+    var date = new Date();
+    if(col === "timeout"){
+      var sql = `UPDATE mydb.timestamp SET ${col} = '${timein}',pending='pending' WHERE ID = '${user}' AND date ='${(date.getMonth()+1+"-"+date.getDate()+"-"+date.getFullYear())}'`;   
+      
+    }else{
+      var sql = `UPDATE mydb.timestamp SET ${col} = '${timein}' WHERE ID = '${user}' AND date ='${(date.getMonth()+1+"-"+date.getDate()+"-"+date.getFullYear())}'`;   
+      
+    }
+    var output = sync.mysql({
+      host: "127.0.0.1",
+      user: "root",
+      password: "123456789",
+      database: "mydb"
+      },
+      sql
+    );
+  },
+  //checks wether or not submited for the day
+  three :  function(col,user,date){
+     
+      var sql = `SELECT ${col} FROM mydb.timestamp WHERE (ID = '${user}') AND (date = '${(date.getMonth()+1+"-"+date.getDate()+"-"+date.getFullYear())}')`;    
+      var output = sync.mysql({
+      host: "127.0.0.1",
+      user: "root",
+      password: "123456789",
+      database: "mydb"
+      },
+      sql
+    );
+    
+      if(col === "timein"){
+        return (output.data.rows[0].timein===null);
+      }
+      if(col === "lunchout"){
+        return (output.data.rows[0].lunchout===null);
+      }
+      if(col === "timeout"){
+        return (output.data.rows[0].timeout===null);
+      }
+      if(col === "lunchin"){
+        return (output.data.rows[0].lunchin===null);
+      }
+      else {return JSON.stringify(output.data.rows)===undefined;}
+    
+
+    
+  },
+  //submit timein
+  four : function(user,timein){
     var date = new Date();
     
     var sql = `INSERT INTO timestamp(timein,ID,date) VALUES('${timein}','${user}','${(date.getMonth()+1)+"-"+date.getDate()+"-"+date.getFullYear()}')`;    
@@ -82,36 +108,20 @@ module.exports={
       sql
     );
   },
-
-  three :  function(user,date){
-     
-      var sql = `SELECT timein FROM mydb.timestamp WHERE (ID = '${user}') AND (date = '${(date.getMonth()+1+"-"+date.getDate()+"-"+date.getFullYear())}')`;    
-      var output = sync.mysql({
-      host: "127.0.0.1",
-      user: "root",
-      password: "123456789",
-      database: "mydb"
-      },
-      sql
-    );
-    console.log(JSON.stringify(output.data.rows[0]) === undefined );
-    console.log(JSON.stringify(output.data.row));
-    
-    return JSON.stringify(output.data.rows[0]) === undefined;
-  },
-  four : function(user,date){
-    
-    var sql = `SELECT lunchin FROM mydb.timestamp WHERE (ID = '${user}') AND (date = '${(date.getMonth()+1+"-"+date.getDate()+"-"+date.getFullYear())}')`;    
+  //view time sheet tab in html
+  five : function(user){
+    var sql = `SELECT date,total,pending FROM mydb.timestamp WHERE ID ='${user}'`;    
     var output = sync.mysql({
     host: "127.0.0.1",
     user: "root",
     password: "123456789",
     database: "mydb"
     },
-    sql);
+    sql
+  );
+  return output.data.rows;
 
 
-    return JSON.stringify(output.data.rows[0]) === undefined;
   }
   
 }
