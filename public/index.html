@@ -49,13 +49,24 @@
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody class = "viewtimesheet"></tbody>
                         
                     </table>
                     
                 </div>
                 <div class="ab c">
-                    <h1>Review Time sheet</h1>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class = "reviewtimesheet"></tbody>
+                        
+                    </table>
                 </div>             
             </div>
        
@@ -104,18 +115,34 @@
             });
 
             var i =0;
-
             $("#b").on('click',function(){   
                     if(i==0){
                         $.get("http://localhost:3000/viewtimesheet", function(data, status){
                     $.each(data, function () {
-                        $("tbody").append(`<tr><td>${this.date}</td><td>${this.total}</td><td>${this.pending}</td></tr>`);
+                        $(".viewtimesheet").append(`<tr><td>${this.date}</td><td>${this.total}</td><td>${this.pending}</td></tr>`);
                     });
                     }); i++;
                     }
                 });
                 
             });
+            var j=0;
+            $("#c").on('click',function(){
+                if(j==0){
+                    $.get("http://localhost:3000/reviewviewtimesheet",function(data,status){
+                        $.each(data,function(){
+                            $(".reviewtimesheet").append(`<tr><td>${this.ID}</td><td>${this.date}</td><td>${this.total}</td><td><button class="btn btn-primary Approve">Approve</button></td><td><button class="btn btn-primary">Disapprove</button></td>`);
+                            });
+                                $(".approve").click(function(){
+                                $.post('/approve', {ID: $(this).parent().siblings().eq(0).html(),date:$(this).parent().siblings().eq(1).html()},function(data,status){     
+                                $(this).prop('disabled', true);
+                });
+
+                        });
+                    });j++;
+                }
+            });
+           
            
             $("a.nav-link").click(function(){
                 $("a.nav-link").removeClass("active");

@@ -40,10 +40,13 @@ app.post("/authentication",function(req,res){
 });
 
 app.get("/viewtimesheet",function(req,res){
-
     var dbData = sql.five(userid);    
     res.json(dbData);
-    
+});
+
+app.get("/reviewviewtimesheet",function(req,res){
+        var dbData = sql.six();    
+        res.json(dbData);        
 });
 
 app.post("/submittimein",function(req,res){
@@ -71,6 +74,12 @@ app.post("/submittimeout",function(req,res){
     var a = req.body;
     var timein = new Date(a.timein);
     sql.two("timeout",userid,timein.getHours()+":"+timein.getMinutes());
+    res.end("");
+});
+
+app.post("/approve",function(req,res){
+    var a = req.body;
+    sql.seven(a.ID,a.date);
     res.end("");
 });
 

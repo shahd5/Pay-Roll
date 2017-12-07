@@ -4,12 +4,6 @@ var mysql = require('mysql');
 var sync = require('sync-sql');
 
 
-
-
-
-
-
-
 var con = mysql.createConnection({
   host: "127.0.0.1",
   user: "root",
@@ -76,7 +70,10 @@ module.exports={
       },
       sql
     );
-    
+      if(output.data.rows.length===0){
+        console.log(output.data.rows.length===0);
+       {return output.data.rows.length===0}  
+      }else{
       if(col === "timein"){
         return (output.data.rows[0].timein===null);
       }
@@ -89,10 +86,7 @@ module.exports={
       if(col === "lunchin"){
         return (output.data.rows[0].lunchin===null);
       }
-      else {return JSON.stringify(output.data.rows)===undefined;}
-    
-
-    
+    }
   },
   //submit timein
   four : function(user,timein){
@@ -119,9 +113,37 @@ module.exports={
     },
     sql
   );
+  console.log(output.data.rows);
   return output.data.rows;
+  },
 
+  six : function(){
+    var sql = `SELECT ID,date,total FROM mydb.timestamp WHERE pending ='pending'`;    
+    var output = sync.mysql({
+    host: "127.0.0.1",
+    user: "root",
+    password: "123456789",
+    database: "mydb"
+    },
+    sql
+  );
+  console.log(output.data.rows);
+  return output.data.rows;
+  },
 
-  }
+  seven : function(ID,date){
+    var sql = `UPDATE mydb.timestamp SET pending = 'approve' WHERE ID = '${ID}' AND date ='${date}'`;       
+    var output = sync.mysql({
+    host: "127.0.0.1",
+    user: "root",
+    password: "123456789",
+    database: "mydb"
+    },
+    sql
+  );
+  
+}
+  
+
   
 }
